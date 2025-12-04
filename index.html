@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriveHub Rentals - Premium Car Rental Service</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand-logo">
+                <i class="fas fa-dharmachakra"></i>
+                <span class="brand-name">DriveHub</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#fleet" class="nav-link">Our Fleet</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <button class="btn-agent-login" onclick="openAuthModal('agent')">
+                <i class="fas fa-user-shield"></i>
+                Agent Login
+            </button>
+        </div>
+    </nav>
+
+    <section class="hero-section" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Premium Rental Experience</span>
+                </div>
+                <h1 class="hero-title">
+                    Your Journey,<br>
+                    <span class="gradient-text">Our Wheels</span>
+                </h1>
+                <p class="hero-description">
+                    Experience the freedom of the road with our premium fleet. 
+                    From luxury sedans to powerful SUVs, find your perfect ride.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="openAuthModal('customer')">
+                        <span>Start Renting</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-play-circle"></i>
+                        <span>Watch Demo</span>
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <h3>500+</h3>
+                        <p>Vehicles</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>10K+</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>4.9★</h3>
+                        <p>Rating</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="car-showcase">
+                    <img src="https://www.pngall.com/wp-content/uploads/11/White-Sedan-PNG-Image.png" alt="Premium Car" class="showcase-car">
+                    <div class="showcase-glow"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section" id="features">
+        <div class="section-container">
+            <div class="section-header-center">
+                <h2>Why Choose DriveHub?</h2>
+                <p>Experience premium car rental with unmatched service and convenience</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Fully Insured</h3>
+                    <p>All vehicles come with comprehensive insurance coverage for your peace of mind</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock customer support to assist you whenever you need help</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>Best Prices</h3>
+                    <p>Competitive pricing with no hidden fees or surprise charges</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Multiple Locations</h3>
+                    <p>Convenient pickup and drop-off points across the city</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Quality Vehicles</h3>
+                    <p>Well-maintained, regularly serviced premium vehicles</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Flexible Booking</h3>
+                    <p>Easy booking and cancellation with flexible rental periods</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="fleet-section" id="fleet">
+        <div class="section-container">
+            <div class="section-header-center">
+                <h2>Our Premium Fleet</h2>
+                <p>Choose from our wide range of luxury and economy vehicles</p>
+            </div>
+            <div class="fleet-grid">
+                <div class="fleet-card">
+                    <div class="fleet-image">
+                        <img src="https://www.pngall.com/wp-content/uploads/11/White-Sedan-PNG-Image.png" alt="Sedans">
+                    </div>
+                    <h3>Sedans</h3>
+                    <p>Comfortable and fuel-efficient cars perfect for city driving</p>
+                    <span class="fleet-price">From $45/day</span>
+                </div>
+                <div class="fleet-card">
+                    <div class="fleet-image">
+                        <img src="https://www.pngall.com/wp-content/uploads/11/Black-SUV-PNG-Image.png" alt="SUVs">
+                    </div>
+                    <h3>SUVs</h3>
+                    <p>Spacious vehicles ideal for family trips and adventures</p>
+                    <span class="fleet-price">From $75/day</span>
+                </div>
+                <div class="fleet-card">
+                    <div class="fleet-image">
+                        <img src="https://www.pngall.com/wp-content/uploads/11/Blue-Sports-Car-PNG-Image.png" alt="Luxury">
+                    </div>
+                    <h3>Luxury</h3>
+                    <p>Premium vehicles for those who demand the best</p>
+                    <span class="fleet-price">From $120/day</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="section-container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h2>Get in Touch</h2>
+                    <p>Have questions? We're here to help!</p>
+                    <div class="contact-items">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Phone</h4>
+                                <p>+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p>support@drivehub.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Address</h4>
+                                <p>123 Main Street, Downtown</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-wrapper">
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="4" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <span>Send Message</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container"
+
+    <div class="auth-modal" id="authModal">
+        <div class="modal-overlay" onclick="closeAuthModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAuthModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="auth-form" id="loginForm">
+                <div class="form-header">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <h2 id="loginTitle">Customer Login</h2>
+                    <p>Welcome back! Please login to your account</p>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" placeholder="your.email@example.com" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="link-text" onclick="showResetPassword(event)">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn-submit" id="loginBtn">
+                        <span>Login</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" class="link-text" onclick="showSignup(event)">Sign up</a></p>
+                </div>
+            </div>
+
+            <div class="auth-form hidden" id="signupForm">
+                <div class="form-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h2>Create Account</h2>
+                    <p>Join DriveHub and start your journey</p>
+                </div>
+                <div class="error-message" id="signupError"></div>
+                <form onsubmit="handleSignup(event)">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="signupName" placeholder="John Doe" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="signupEmail" placeholder="your.email@example.com" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="signupPassword" placeholder="Create a password" required minlength="6">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit" id="signupBtn">
+                        <span>Create Account</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" class="link-text" onclick="showLogin(event)">Login</a></p>
+                </div>
+            </div>
+
+            <div class="auth-form hidden" id="resetForm">
+                <div class="form-header">
+                    <i class="fas fa-key"></i>
+                    <h2>Reset Password</h2>
+                    <p>Enter your email to receive a reset link</p>
+                </div>
+                <div class="error-message" id="resetError"></div>
+                <form onsubmit="handleResetPassword(event)">
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="resetEmail" placeholder="your.email@example.com" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit" id="resetBtn">
+                        <span>Send Reset Link</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+                <div class="form-footer">
+                    <p>Remember your password? <a href="#" class="link-text" onclick="showLogin(event)">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-notification" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

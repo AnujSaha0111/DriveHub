@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - DriveHub Rentals</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="customer-dashboard.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-dharmachakra"></i>
+                    <span>DriveHub</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#overview" class="nav-item active" data-section="overview">
+                    <i class="fas fa-th-large"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#browse" class="nav-item" data-section="browse">
+                    <i class="fas fa-car"></i>
+                    <span>Browse Vehicles</span>
+                </a>
+                <a href="#bookings" class="nav-item" data-section="bookings">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>My Bookings</span>
+                </a>
+                <a href="#history" class="nav-item" data-section="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="#reviews" class="nav-item" data-section="reviews">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews</span>
+                </a>
+                <a href="#profile" class="nav-item" data-section="profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageSubtitle">Welcome back, <span id="userName">User</span>!</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-date">
+                        <i class="fas fa-calendar-day"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-section active" id="overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeBookings">0</h3>
+                            <p>Active Bookings</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon cyan">
+                            <i class="fas fa-road"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalTrips">0</h3>
+                            <p>Total Trips</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="loyaltyPoints">0</h3>
+                            <p>Loyalty Points</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="userRating">5.0</h3>
+                            <p>Your Rating</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity-section">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item empty">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No recent activity. Start by booking a vehicle!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="browse">
+                <div class="browse-container">
+                    <div class="filters-sidebar">
+                        <div class="filters-header">
+                            <h3>Filters</h3>
+                            <button class="btn-reset-filters" id="resetFilters">Reset</button>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Vehicle Type</label>
+                            <select class="filter-select" id="filterType">
+                                <option value="">All Types</option>
+                                <option value="sedan">Sedan</option>
+                                <option value="suv">SUV</option>
+                                <option value="luxury">Luxury</option>
+                                <option value="sports">Sports</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Price Range</label>
+                            <div class="price-range">
+                                <input type="range" min="20" max="200" value="200" class="range-slider" id="priceRange">
+                                <div class="price-display">
+                                    <span>$20</span>
+                                    <span id="maxPrice">$200</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Pickup Date</label>
+                            <input type="date" class="filter-input" id="pickupDate">
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Return Date</label>
+                            <input type="date" class="filter-input" id="returnDate">
+                        </div>
+
+                        <div class="filter-group">
+                            <label>Location</label>
+                            <select class="filter-select" id="filterLocation">
+                                <option value="">Select Location</option>
+                                <option value="downtown">Downtown</option>
+                                <option value="airport">Airport</option>
+                                <option value="north">North District</option>
+                                <option value="south">South District</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="vehicles-grid" id="vehiclesGrid">
+                        <div class="loading-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading vehicles...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="bookings">
+                <div class="bookings-container">
+                    <div class="bookings-header">
+                        <h2>My Active Bookings</h2>
+                    </div>
+                    <div class="bookings-list" id="bookingsList">
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>No active bookings</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="history">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2>Rental History</h2>
+                        <div class="history-filters">
+                            <select class="filter-select" id="historyFilter">
+                                <option value="all">All Rentals</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Vehicle</th>
+                                    <th>Pickup Date</th>
+                                    <th>Return Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr class="empty-row">
+                                    <td colspan="5">No rental history found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="reviews">
+                <div class="reviews-container">
+                    <div class="reviews-grid">
+                        <div class="my-reviews-panel">
+                            <h2>My Reviews</h2>
+                            <div class="reviews-list" id="myReviewsList">
+                                <div class="empty-state">
+                                    <i class="fas fa-comment-slash"></i>
+                                    <p>You haven't written any reviews yet</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="write-review-panel">
+                            <h2>Write a Review</h2>
+                            <form class="review-form" id="reviewForm">
+                                <div class="form-group">
+                                    <label>Select Rental</label>
+                                    <select class="form-input" id="reviewRental" required>
+                                        <option value="">Choose a completed rental</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Rating</label>
+                                    <div class="star-rating" id="starRating">
+                                        <i class="far fa-star" data-rating="1"></i>
+                                        <i class="far fa-star" data-rating="2"></i>
+                                        <i class="far fa-star" data-rating="3"></i>
+                                        <i class="far fa-star" data-rating="4"></i>
+                                        <i class="far fa-star" data-rating="5"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Your Review</label>
+                                    <textarea class="form-textarea" id="reviewText" rows="4" placeholder="Share your experience..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn-submit">
+                                    <span>Submit Review</span>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="profile">
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profileName">User Name</h2>
+                                <p id="profileEmail">user@example.com</p>
+                                <p class="member-since">Member since <span id="memberSince">2024</span></p>
+                            </div>
+                        </div>
+
+                        <form class="profile-form" id="profileForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-input" id="fullName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" class="form-input" id="phoneNumber">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" class="form-input" id="address">
+                                </div>
+                                <div class="form-group">
+                                    <label>Driver's License</label>
+                                    <input type="text" class="form-input" id="driversLicense">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select class="form-input" id="paymentMethod">
+                                    <option value="">Select payment method</option>
+                                    <option value="credit">Credit Card</option>
+                                    <option value="debit">Debit Card</option>
+                                    <option value="paypal">PayPal</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span>Update Profile</span>
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="password-card">
+                        <h3>Change Password</h3>
+                        <form class="password-form" id="passwordForm">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" class="form-input" id="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" class="form-input" id="newPassword" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" class="form-input" id="confirmNewPassword" required>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span>Change Password</span>
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal" id="vehicleModal">
+        <div class="modal-overlay" onclick="closeVehicleModal()"></div>
+        <div class="modal-content large">
+            <button class="modal-close" onclick="closeVehicleModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="vehicleDetails"></div>
+        </div>
+    </div>
+
+    <div class="toast-notification" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="customer-dashboard.js"></script>
+    <script src="booking.js"></script>
+</body>
+</html>

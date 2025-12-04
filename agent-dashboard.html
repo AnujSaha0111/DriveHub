@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard - DriveHub Rentals</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="customer-dashboard.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i class="fas fa-dharmachakra"></i>
+                    <span>DriveHub</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#overview" class="nav-item active" data-section="overview">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#vehicles" class="nav-item" data-section="vehicles">
+                    <i class="fas fa-car"></i>
+                    <span>Manage Vehicles</span>
+                </a>
+                <a href="#rentals" class="nav-item" data-section="rentals">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Rental Requests</span>
+                </a>
+                <a href="#customers" class="nav-item" data-section="customers">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="#reports" class="nav-item" data-section="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#reviews" class="nav-item" data-section="reviews">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews</span>
+                </a>
+                <a href="#profile" class="nav-item" data-section="profile">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Analytics Dashboard</h1>
+                    <p id="pageSubtitle">Welcome, <span id="agentName">Agent</span>!</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-date">
+                        <i class="fas fa-calendar-day"></i>
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="content-section active" id="overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalVehicles">0</h3>
+                            <p>Total Vehicles</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon cyan">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeRentals">0</h3>
+                            <p>Active Rentals</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="monthlyRevenue">$0</h3>
+                            <p>Monthly Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalCustomers">0</h3>
+                            <p>Total Customers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-activity-section">
+                    <h2>Recent Rental Requests</h2>
+                    <div class="activity-list" id="recentRentals">
+                        <div class="activity-item empty">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No recent rental requests</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="vehicles">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2>Vehicle Inventory</h2>
+                    <button class="btn-submit" onclick="showAddVehicleModal()" style="width: auto;">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Vehicle</span>
+                    </button>
+                </div>
+                <div class="vehicles-grid" id="agentVehiclesGrid">
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading vehicles...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="rentals">
+                <div class="bookings-container">
+                    <div class="bookings-header">
+                        <h2>Pending Rental Requests</h2>
+                    </div>
+                    <div class="history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Vehicle</th>
+                                    <th>Pickup Date</th>
+                                    <th>Return Date</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rentalRequestsBody">
+                                <tr class="empty-row">
+                                    <td colspan="6">No pending requests</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="customers">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2>Customer Database</h2>
+                    </div>
+                    <div class="history-table-wrapper">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Total Trips</th>
+                                    <th>Loyalty Points</th>
+                                    <th>Member Since</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTableBody">
+                                <tr class="empty-row">
+                                    <td colspan="5">No customers found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="reports">
+                <div class="reports-container" style="background: var(--card-bg); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: var(--radius-lg); padding: var(--spacing-lg);">
+                    <h2 style="margin-bottom: 1.5rem;">Revenue Reports</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(139, 92, 246, 0.1);">
+                            <h3 style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Today's Revenue</h3>
+                            <p style="font-size: 2rem; font-weight: 700; color: var(--success);" id="todayRevenue">$0</p>
+                        </div>
+                        <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(139, 92, 246, 0.1);">
+                            <h3 style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">This Week</h3>
+                            <p style="font-size: 2rem; font-weight: 700; color: var(--primary-violet);" id="weekRevenue">$0</p>
+                        </div>
+                        <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(139, 92, 246, 0.1);">
+                            <h3 style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">This Month</h3>
+                            <p style="font-size: 2rem; font-weight: 700; color: var(--secondary-cyan);" id="monthRevenue">$0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="reviews">
+                <div class="reviews-container">
+                    <h2 style="margin-bottom: 1.5rem;">Customer Reviews</h2>
+                    <div class="reviews-list" id="agentReviewsList">
+                        <div class="empty-state">
+                            <i class="fas fa-star"></i>
+                            <p>No reviews yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-section" id="profile">
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h2 id="profileName">Agent Name</h2>
+                                <p id="profileEmail">agent@example.com</p>
+                                <p class="member-since">Agent since <span id="memberSince">2024</span></p>
+                            </div>
+                        </div>
+
+                        <form class="profile-form" id="profileForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-input" id="fullName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" class="form-input" id="phoneNumber">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span>Update Profile</span>
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="password-card">
+                        <h3>Change Password</h3>
+                        <form class="password-form" id="passwordForm">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" class="form-input" id="currentPassword" required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" class="form-input" id="newPassword" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" class="form-input" id="confirmNewPassword" required>
+                            </div>
+                            <button type="submit" class="btn-submit">
+                                <span>Change Password</span>
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast-notification" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="agent-dashboard.js"></script>
+</body>
+</html>
