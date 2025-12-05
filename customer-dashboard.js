@@ -216,7 +216,6 @@ async function loadBookingsList() {
     }
 }
 
-// End ride function
 async function endRide(bookingId) {
     if (!confirm('Are you sure you want to end this ride?')) return;
     
@@ -236,7 +235,6 @@ async function endRide(bookingId) {
     }
 }
 
-// Load rental history
 async function loadHistory() {
     try {
         const historyBody = document.getElementById('historyTableBody');

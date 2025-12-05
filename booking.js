@@ -148,7 +148,6 @@ function showVehicleDetails(vehicle) {
     
     modal.classList.add('active');
     
-    // Add event listeners for date changes to update price
     if (vehicle.available) {
         const pickupInput = document.getElementById('modalPickupDate');
         const returnInput = document.getElementById('modalReturnDate');

@@ -123,14 +123,18 @@ async function loadDashboardStats() {
             const now = new Date();
             const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
             
+            const vehicleIdsToQuery = vehicleIds.slice(0, 10);
+            
             const monthlyBookings = await db.collection('bookings')
-                .where('vehicleId', 'in', vehicleIds)
-                .where('createdAt', '>=', firstDayOfMonth)
+                .where('vehicleId', 'in', vehicleIdsToQuery)
                 .get();
             
             monthlyBookings.forEach(doc => {
                 const booking = doc.data();
-                monthlyRevenue += booking.totalPrice || 0;
+                const bookingDate = booking.createdAt ? booking.createdAt.toDate() : null;
+                if (bookingDate && bookingDate >= firstDayOfMonth) {
+                    monthlyRevenue += booking.totalPrice || 0;
+                }
             });
         }
         
@@ -144,13 +148,13 @@ async function loadDashboardStats() {
     }
 }
 
-// Load recent rental requests for THIS agent's vehicles
 async function loadRecentRentals() {
     try {
         const recentList = document.getElementById('recentRentals');
         if (!recentList) return;
         
-        // First get this agent's vehicles
+        console.log('Loading recent rentals for agent:', currentAgent.uid);
+        
         const agentVehicles = await db.collection('vehicles')
             .where('agentId', '==', currentAgent.uid)
             .get();
@@ -160,17 +164,23 @@ async function loadRecentRentals() {
             vehicleIds.push(doc.id);
         });
         
+        console.log('Agent has', vehicleIds.length, 'vehicles');
+        
         if (vehicleIds.length === 0) {
             recentList.innerHTML = '<div class="activity-item empty"><i class="fas fa-info-circle"></i><p>No vehicles added yet. Add vehicles to see rental requests!</p></div>';
             return;
         }
         
-        // Get bookings for these vehicles
+        const vehicleIdsToQuery = vehicleIds.slice(0, 10);
+        
+        console.log('Querying bookings for', vehicleIdsToQuery.length, 'vehicles');
+        
         const recentSnapshot = await db.collection('bookings')
-            .where('vehicleId', 'in', vehicleIds)
+            .where('vehicleId', 'in', vehicleIdsToQuery)
             .where('status', '==', 'active')
-            .limit(10)
             .get();
+        
+        console.log('Found', recentSnapshot.size, 'active bookings');
         
         recentList.innerHTML = '';
         
@@ -179,7 +189,6 @@ async function loadRecentRentals() {
             return;
         }
         
-        // Convert to array and sort
         const rentalsArray = [];
         for (const doc of recentSnapshot.docs) {
             const rental = doc.data();
@@ -188,7 +197,6 @@ async function loadRecentRentals() {
             rentalsArray.push({ ...rental, userName, id: doc.id });
         }
         
-        // Sort by createdAt if available
         rentalsArray.sort((a, b) => {
             if (a.createdAt && b.createdAt) {
                 return b.createdAt.toMillis() - a.createdAt.toMillis();
@@ -196,8 +204,9 @@ async function loadRecentRentals() {
             return 0;
         });
         
-        // Take first 5
         const displayRentals = rentalsArray.slice(0, 5);
+        
+        console.log('Displaying', displayRentals.length, 'rentals');
         
         displayRentals.forEach(rental => {
             const activityItem = document.createElement('div');
@@ -220,15 +229,16 @@ async function loadRecentRentals() {
         console.error('Error loading recent rentals:', error);
         const recentList = document.getElementById('recentRentals');
         if (recentList) {
-            recentList.innerHTML = '<div class="activity-item empty"><i class="fas fa-info-circle"></i><p>Error loading rental requests</p></div>';
+            recentList.innerHTML = '<div class="activity-item empty"><i class="fas fa-exclamation-circle"></i><p>Error loading rental requests</p></div>';
         }
     }
 }
 
-// Load revenue reports for THIS agent only
 async function loadRevenueReports() {
     try {
-        // First get this agent's vehicles
+        console.log('=== Loading Revenue Reports ===');
+        console.log('Agent UID:', currentAgent.uid);
+        
         const agentVehicles = await db.collection('vehicles')
             .where('agentId', '==', currentAgent.uid)
             .get();
@@ -236,18 +246,26 @@ async function loadRevenueReports() {
         const vehicleIds = [];
         agentVehicles.forEach(doc => {
             vehicleIds.push(doc.id);
+            console.log('Vehicle:', doc.id, doc.data().name);
         });
         
+        console.log('Total vehicles for revenue:', vehicleIds.length);
+        
         if (vehicleIds.length === 0) {
+            console.log('No vehicles found, setting revenue to $0');
             document.getElementById('todayRevenue').textContent = '$0';
             document.getElementById('weekRevenue').textContent = '$0';
             return;
         }
         
-        // Get all bookings for these vehicles
+        const vehicleIdsToQuery = vehicleIds.slice(0, 10);
+        console.log('Querying revenue for', vehicleIdsToQuery.length, 'vehicles');
+        
         const bookingsSnapshot = await db.collection('bookings')
-            .where('vehicleId', 'in', vehicleIds)
+            .where('vehicleId', 'in', vehicleIdsToQuery)
             .get();
+        
+        console.log('Found', bookingsSnapshot.size, 'total bookings for revenue');
         
         const now = new Date();
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -255,22 +273,41 @@ async function loadRevenueReports() {
         startOfWeek.setDate(now.getDate() - now.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
         
+        console.log('Today starts at:', startOfDay);
+        console.log('Week starts at:', startOfWeek);
+        
         let todayRevenue = 0;
         let weekRevenue = 0;
         
         bookingsSnapshot.forEach(doc => {
             const booking = doc.data();
             const bookingDate = booking.createdAt ? booking.createdAt.toDate() : null;
+            const price = booking.totalPrice || 0;
+            
+            console.log('Booking:', doc.id, {
+                vehicleId: booking.vehicleId,
+                vehicleName: booking.vehicleName,
+                createdAt: bookingDate,
+                totalPrice: price,
+                status: booking.status
+            });
             
             if (bookingDate) {
                 if (bookingDate >= startOfDay) {
-                    todayRevenue += booking.totalPrice || 0;
+                    todayRevenue += price;
+                    console.log('  -> Added to today:', price);
                 }
                 if (bookingDate >= startOfWeek) {
-                    weekRevenue += booking.totalPrice || 0;
+                    weekRevenue += price;
+                    console.log('  -> Added to week:', price);
                 }
+            } else {
+                console.log('  -> No createdAt date');
             }
         });
+        
+        console.log('Final Today Revenue:', todayRevenue);
+        console.log('Final Week Revenue:', weekRevenue);
         
         document.getElementById('todayRevenue').textContent = '$' + todayRevenue.toFixed(0);
         document.getElementById('weekRevenue').textContent = '$' + weekRevenue.toFixed(0);
@@ -279,10 +316,8 @@ async function loadRevenueReports() {
     }
 }
 
-// Load customers who have booked from this agent
 async function loadCustomers() {
     try {
-        // First, get all vehicles from this agent
         const agentVehicles = await db.collection('vehicles')
             .where('agentId', '==', currentAgent.uid)
             .get();
@@ -298,12 +333,10 @@ async function loadCustomers() {
             return;
         }
         
-        // Get all bookings for these vehicles
         const bookingsSnapshot = await db.collection('bookings')
             .where('vehicleId', 'in', vehicleIds)
             .get();
         
-        // Get unique customer IDs
         const customerIds = new Set();
         bookingsSnapshot.forEach(doc => {
             customerIds.add(doc.data().userId);
@@ -315,7 +348,6 @@ async function loadCustomers() {
             return;
         }
         
-        // Load customer data and calculate trips from THIS agent
         const tableBody = document.getElementById('customersTableBody');
         tableBody.innerHTML = '';
         
@@ -324,7 +356,6 @@ async function loadCustomers() {
             if (customerDoc.exists) {
                 const customer = customerDoc.data();
                 
-                // Count trips from THIS agent only
                 let agentTrips = 0;
                 bookingsSnapshot.forEach(doc => {
                     if (doc.data().userId === customerId) {
@@ -357,13 +388,11 @@ async function loadCustomers() {
     }
 }
 
-// Load reviews for this agent's vehicles
 async function loadAgentReviews() {
     try {
         const reviewsList = document.getElementById('agentReviewsList');
         if (!reviewsList) return;
         
-        // First get this agent's vehicles
         const agentVehicles = await db.collection('vehicles')
             .where('agentId', '==', currentAgent.uid)
             .get();
@@ -380,12 +409,10 @@ async function loadAgentReviews() {
             return;
         }
         
-        // Get all bookings for these vehicles
         const bookingsSnapshot = await db.collection('bookings')
             .where('vehicleId', 'in', vehicleIds)
             .get();
         
-        // Get rental IDs
         const rentalIds = [];
         bookingsSnapshot.forEach(doc => {
             rentalIds.push(doc.id);
@@ -396,7 +423,6 @@ async function loadAgentReviews() {
             return;
         }
         
-        // Get reviews for these rentals
         const reviewsSnapshot = await db.collection('reviews')
             .where('rentalId', 'in', rentalIds)
             .get();
@@ -408,13 +434,11 @@ async function loadAgentReviews() {
             return;
         }
         
-        // Load reviews with user data
         for (const doc of reviewsSnapshot.docs) {
             const review = doc.data();
             const userDoc = await db.collection('users').doc(review.userId).get();
             const userName = userDoc.exists ? userDoc.data().name : 'Anonymous';
             
-            // Get booking to find vehicle name
             const bookingDoc = await db.collection('bookings').doc(review.rentalId).get();
             const vehicleName = bookingDoc.exists ? vehicleNames[bookingDoc.data().vehicleId] || 'Unknown Vehicle' : 'Unknown Vehicle';
             
@@ -449,7 +473,6 @@ async function loadAgentReviews() {
     }
 }
 
-// Load vehicles for this agent
 async function loadVehicles() {
     const vehiclesGrid = document.getElementById('agentVehiclesGrid');
     if (!vehiclesGrid) return;
@@ -459,7 +482,6 @@ async function loadVehicles() {
     try {
         console.log('Loading vehicles for agent:', currentAgent.uid);
         
-        // Load vehicles created by this agent
         const vehiclesSnapshot = await db.collection('vehicles')
             .where('agentId', '==', currentAgent.uid)
             .get();
@@ -516,7 +538,6 @@ async function loadVehicles() {
     }
 }
 
-// Vehicle management functions
 function showAddVehicleModal() {
     const modal = document.createElement('div');
     modal.className = 'modal active';
@@ -604,7 +625,6 @@ function closeVehicleFormModal() {
 
 async function editVehicle(vehicleId) {
     try {
-        // Load vehicle data from Firestore
         const vehicleDoc = await db.collection('vehicles').doc(vehicleId).get();
         
         if (!vehicleDoc.exists) {
@@ -705,7 +725,6 @@ async function deleteVehicle(vehicleId) {
     }
 }
 
-// Profile form submission
 document.getElementById('profileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -735,7 +754,6 @@ document.getElementById('profileForm').addEventListener('submit', async (e) => {
     }
 });
 
-// Password change form
 document.getElementById('passwordForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -775,7 +793,6 @@ document.getElementById('passwordForm').addEventListener('submit', async (e) => 
     }
 });
 
-// Logout functionality
 document.getElementById('logoutBtn').addEventListener('click', async () => {
     try {
         await auth.signOut();
@@ -786,7 +803,6 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
     }
 });
 
-// Toast notification
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
@@ -809,7 +825,6 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
-// Initialize on auth state change
 auth.onAuthStateChanged((user) => {
     if (user) {
         formatDate();
