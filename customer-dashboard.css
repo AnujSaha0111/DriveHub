@@ -47,7 +47,6 @@ body {
     min-height: 100vh;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar {
     width: 280px;
     background: var(--sidebar-bg);
@@ -149,7 +148,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* ===== MAIN CONTENT ===== */
 .main-content {
     flex: 1;
     margin-left: 280px;
@@ -194,7 +192,6 @@ body {
     color: var(--text-secondary);
 }
 
-/* ===== CONTENT SECTIONS ===== */
 .content-section {
     display: none;
 }
@@ -209,7 +206,6 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== STATS GRID ===== */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -259,7 +255,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* ===== RECENT ACTIVITY ===== */
 .recent-activity-section {
     background: var(--card-bg);
     border: 1px solid rgba(139, 92, 246, 0.2);
@@ -292,7 +287,6 @@ body {
     color: var(--text-muted);
 }
 
-/* ===== BROWSE VEHICLES ===== */
 .browse-container {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -360,7 +354,6 @@ body {
     border-color: var(--primary-violet);
 }
 
-/* Fix dropdown options visibility */
 .filter-select option,
 .form-input option,
 select option {
@@ -391,7 +384,6 @@ select option:hover {
     font-size: 0.9rem;
 }
 
-/* ===== VEHICLES GRID ===== */
 .vehicles-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
@@ -473,7 +465,6 @@ select option:hover {
     box-shadow: var(--shadow-glow);
 }
 
-/* ===== LOADING & EMPTY STATES ===== */
 .loading-state,
 .empty-state {
     grid-column: 1 / -1;
@@ -488,7 +479,6 @@ select option:hover {
     margin-bottom: var(--spacing-sm);
 }
 
-/* ===== BOOKINGS & HISTORY ===== */
 .bookings-container,
 .history-container {
     background: var(--card-bg);
@@ -537,7 +527,6 @@ select option:hover {
     padding: var(--spacing-lg);
 }
 
-/* ===== REVIEWS ===== */
 .reviews-container {
     background: var(--card-bg);
     border: 1px solid rgba(139, 92, 246, 0.2);
@@ -577,7 +566,6 @@ select option:hover {
     color: var(--warning);
 }
 
-/* ===== PROFILE ===== */
 .profile-container {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -621,7 +609,6 @@ select option:hover {
     margin-top: var(--spacing-xs);
 }
 
-/* ===== FORMS ===== */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -657,7 +644,6 @@ select option:hover {
     border-color: var(--primary-violet);
 }
 
-/* Ensure select dropdowns show options clearly */
 .form-input option,
 select.form-input option {
     background: var(--darker-bg);
@@ -696,7 +682,6 @@ select.form-input option:checked {
     box-shadow: var(--shadow-glow);
 }
 
-/* ===== MODAL ===== */
 .modal {
     position: fixed;
     top: 0;
@@ -762,7 +747,6 @@ select.form-input option:checked {
     transform: rotate(90deg);
 }
 
-/* ===== TOAST ===== */
 .toast-notification {
     position: fixed;
     top: 100px;
@@ -789,7 +773,6 @@ select.form-input option:checked {
     font-size: 1.2rem;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .browse-container,
     .reviews-grid,

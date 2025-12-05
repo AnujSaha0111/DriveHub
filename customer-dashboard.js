@@ -40,7 +40,7 @@ function initializeNavigation() {
                 } else if (sectionId === 'history') {
                     loadHistory();
                 } else if (sectionId === 'reviews') {
-                    loadHistory(); // Load history to populate review dropdown
+                    loadHistory();
                 }
             }
         });

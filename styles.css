@@ -5,7 +5,6 @@
 }
 
 :root {
-    /* Color Palette - Purple/Violet Theme */
     --primary-purple: #7c3aed;
     --primary-violet: #8b5cf6;
     --secondary-cyan: #06b6d4;
@@ -20,25 +19,21 @@
     --error: #ef4444;
     --warning: #f59e0b;
     
-    /* Gradients */
     --gradient-primary: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #06b6d4 100%);
     --gradient-secondary: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 100%);
     --gradient-glow: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
     
-    /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 1.5rem;
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
     
-    /* Border Radius */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     
-    /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -53,7 +48,6 @@ body {
     line-height: 1.6;
 }
 
-/* ===== ANIMATED BACKGROUND ===== */
 .animated-bg {
     position: fixed;
     top: 0;
@@ -106,7 +100,6 @@ body {
     66% { transform: translate(-30px, 30px) scale(0.9); }
 }
 
-/* ===== NAVIGATION BAR ===== */
 .navbar {
     position: fixed;
     top: 0;
@@ -201,7 +194,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* ===== HERO SECTION ===== */
 .hero-section {
     min-height: 100vh;
     display: flex;
@@ -326,7 +318,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* ===== HERO VISUAL ===== */
 .hero-visual {
     position: relative;
     display: flex;
@@ -362,7 +353,6 @@ body {
     50% { transform: translateY(-20px); }
 }
 
-/* ===== FEATURES SECTION ===== */
 .features-section,
 .fleet-section,
 .contact-section {
@@ -434,7 +424,6 @@ body {
     line-height: 1.6;
 }
 
-/* ===== FLEET SECTION ===== */
 .fleet-section {
     background: var(--dark-bg);
 }
@@ -493,7 +482,6 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===== CONTACT SECTION ===== */
 .contact-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -581,7 +569,6 @@ body {
     resize: vertical;
 }
 
-/* ===== AUTHENTICATION MODAL ===== */
 .auth-modal {
     position: fixed;
     top: 0;
@@ -805,7 +792,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* ===== TOAST NOTIFICATION ===== */
 .toast-notification {
     position: fixed;
     top: 100px;
@@ -832,7 +818,6 @@ body {
     font-size: 1.2rem;
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
     .hero-container {
         grid-template-columns: 1fr;
