@@ -138,7 +138,7 @@ class CalendarView {
             grid.appendChild(cell);
         }
         
-        const remainingCells = 42 - grid.children.length; 
+        const remainingCells = 42 - grid.children.length; // 6 rows × 7 days
         for (let day = 1; day <= remainingCells; day++) {
             const cell = this.createDayCell(day, true);
             grid.appendChild(cell);

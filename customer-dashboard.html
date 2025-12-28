@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="customer-dashboard.css">
+    <link rel="stylesheet" href="calendar-view.css">
+    <link rel="stylesheet" href="booking-cart.css">
+    <link rel="stylesheet" href="smart-booking-styles.css">
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -65,6 +68,10 @@
                     <p id="pageSubtitle">Welcome back, <span id="userName">User</span>!</p>
                 </div>
                 <div class="header-right">
+                    <div class="cart-icon-container" id="cartIcon" style="margin-right: 1.5rem; cursor: pointer; position: relative;">
+                        <i class="fas fa-shopping-cart" style="font-size: 1.5rem; color: var(--primary-violet);"></i>
+                        <div class="cart-badge" id="cartBadge" style="display: none;">0</div>
+                    </div>
                     <div class="header-date">
                         <i class="fas fa-calendar-day"></i>
                         <span id="currentDate"></span>
@@ -72,6 +79,8 @@
                 </div>
             </header>
 
+            <div id="lateReturnWarnings" style="margin-bottom: 1.5rem;"></div>
+            
             <section class="content-section active" id="overview">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -124,6 +133,8 @@
             </section>
 
             <section class="content-section" id="browse">
+                <div id="calendarViewContainer" style="margin-bottom: 2rem;"></div>
+                
                 <div class="browse-container">
                     <div class="filters-sidebar">
                         <div class="filters-header">
@@ -189,6 +200,17 @@
                     <div class="bookings-header">
                         <h2>My Active Bookings</h2>
                     </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Recurring Rentals</h3>
+                        <div id="recurringRentalsList"></div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Waiting List</h3>
+                        <div id="waitingListContainer"></div>
+                    </div>
+                    
                     <div class="bookings-list" id="bookingsList">
                         <div class="empty-state">
                             <i class="fas fa-calendar-times"></i>
@@ -370,7 +392,54 @@
     </div>
 
     <script src="firebase-config.js"></script>
+    <script src="calendar-view.js"></script>
+    <script src="booking-cart.js"></script>
+    <script src="recurring-rentals.js"></script>
+    <script src="booking-modifications.js"></script>
+    <script src="cancellation-policy.js"></script>
+    <script src="waiting-list.js"></script>
+    <script src="early-return.js"></script>
+    <script src="late-fees.js"></script>
     <script src="customer-dashboard.js"></script>
     <script src="booking.js"></script>
+    
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <button class="cart-close-btn" id="closeCart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-summary">
+                <div class="cart-summary-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">$0.00</span>
+                </div>
+                <div class="cart-summary-row">
+                    <span>Tax (10%):</span>
+                    <span id="cartTax">$0.00</span>
+                </div>
+                <div class="cart-summary-row total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0.00</span>
+                </div>
+            </div>
+            <button class="cart-checkout-btn" id="checkoutCart">
+                <span>Checkout</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="cart-continue-btn" id="continueShopping">
+                Continue Shopping
+            </button>
+        </div>
+    </aside>
 </body>
 </html>

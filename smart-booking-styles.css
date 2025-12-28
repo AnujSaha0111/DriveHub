@@ -1,0 +1,407 @@
+.late-return-warning {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.late-return-warning .warning-icon {
+    font-size: 2.5rem;
+    color: var(--error);
+}
+
+.late-return-warning .warning-content {
+    flex: 1;
+}
+
+.late-return-warning .warning-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--error);
+}
+
+.late-return-warning .warning-content p {
+    margin: 0.25rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.late-return-warning .warning-details {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.recurring-rental-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.recurring-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.recurring-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.recurring-info {
+    margin-bottom: 1rem;
+}
+
+.recurring-info p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.recurring-info i {
+    color: var(--primary-violet);
+}
+
+.recurring-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-action {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.btn-action:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--primary-violet);
+}
+
+.btn-action.danger {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--error);
+}
+
+.btn-action.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--error);
+}
+
+.waitlist-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.waitlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.waitlist-header h4 {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.btn-icon {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--error);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+    background: var(--error);
+    color: white;
+}
+
+.waitlist-info p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.waitlist-info i {
+    color: var(--warning);
+}
+
+.waitlist-status {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(251, 146, 60, 0.2);
+}
+
+.status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.status-badge.success {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-badge.warning {
+    background: rgba(251, 146, 60, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.status-badge.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.availability-notification {
+    position: fixed;
+    top: 20px;
+    right: -400px;
+    width: 380px;
+    background: var(--card-bg);
+    border: 1px solid var(--success);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    transition: right 0.3s ease;
+}
+
+.availability-notification.active {
+    right: 20px;
+}
+
+.notification-content {
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.notification-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+}
+
+.notification-content p {
+    margin: 0 0 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.price-comparison {
+    background: var(--glass-bg);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+}
+
+.comparison-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.comparison-row.new-price {
+    font-weight: 600;
+    color: var(--primary-violet);
+}
+
+.comparison-row.difference {
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 0.875rem;
+    background: var(--glass-bg);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: var(--text-primary);
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: rgba(139, 92, 246, 0.1);
+    border-color: var(--primary-violet);
+}
+
+.btn-danger {
+    flex: 1;
+    padding: 0.875rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-danger:hover {
+    background: var(--error);
+    color: white;
+}
+
+.booking-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+    flex-wrap: wrap;
+}
+
+.booking-card-actions button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.btn-edit {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--primary-cyan);
+    border: 1px solid var(--primary-cyan);
+}
+
+.btn-edit:hover {
+    background: var(--primary-cyan);
+    color: white;
+}
+
+.btn-cancel {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.btn-cancel:hover {
+    background: var(--error);
+    color: white;
+}
+
+.btn-return {
+    background: rgba(251, 146, 60, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.btn-return:hover {
+    background: var(--warning);
+    color: white;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .availability-notification {
+        width: calc(100% - 40px);
+        right: -100%;
+    }
+    
+    .availability-notification.active {
+        right: 20px;
+    }
+    
+    .late-return-warning {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .booking-card-actions {
+        flex-direction: column;
+    }
+    
+    .booking-card-actions button {
+        width: 100%;
+    }
+}

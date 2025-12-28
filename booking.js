@@ -21,8 +21,8 @@ async function loadVehicles() {
                 name: vehicleData.name,
                 type: vehicleData.type,
                 price: vehicleData.price,
-                image: 'https://www.pngall.com/wp-content/uploads/11/White-Sedan-PNG-Image.png',
-                features: { fuel: 'Gasoline', transmission: 'Automatic', seats: 5 },
+                image: 'https://www.pngall.com/wp-content/uploads/11/White-Sedan-PNG-Image.png', // Default image
+                features: { fuel: 'Gasoline', transmission: 'Automatic', seats: 5 }, // Default features
                 available: vehicleData.status === 'Available'
             };
             
@@ -38,10 +38,9 @@ async function loadVehicles() {
 function createVehicleCard(vehicle) {
     const card = document.createElement('div');
     card.className = 'vehicle-card';
-    card.onclick = () => showVehicleDetails(vehicle);
     
     card.innerHTML = `
-        <img src="${vehicle.image}" alt="${vehicle.name}" class="vehicle-image">
+        <img src="${vehicle.image}" alt="${vehicle.name}" class="vehicle-image" onclick="showVehicleDetails({id: '${vehicle.id}', name: '${vehicle.name}', type: '${vehicle.type}', price: ${vehicle.price}, image: '${vehicle.image}', features: ${JSON.stringify(vehicle.features).replace(/"/g, '&quot;')}, available: ${vehicle.available}})">
         <div class="vehicle-info">
             <h3 class="vehicle-name">${vehicle.name}</h3>
             <p class="vehicle-type">${vehicle.type.charAt(0).toUpperCase() + vehicle.type.slice(1)}</p>
@@ -52,9 +51,21 @@ function createVehicleCard(vehicle) {
             </div>
             <div class="vehicle-price">
                 <span class="price-amount">$${vehicle.price}</span>
-                <button class="btn-book" ${!vehicle.available ? 'disabled' : ''}>
-                    ${vehicle.available ? 'Book Now' : 'Unavailable'}
-                </button>
+                <div style="display: flex; gap: 0.5rem;">
+                    ${vehicle.available ? `
+                        <button class="btn-add-to-cart" onclick="event.stopPropagation(); addVehicleToCart({id: '${vehicle.id}', name: '${vehicle.name}', type: '${vehicle.type}', price: ${vehicle.price}, image: '${vehicle.image}', features: ${JSON.stringify(vehicle.features).replace(/"/g, '&quot;')}, available: ${vehicle.available}})">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>
+                        <button class="btn-book" onclick="event.stopPropagation(); showVehicleDetails({id: '${vehicle.id}', name: '${vehicle.name}', type: '${vehicle.type}', price: ${vehicle.price}, image: '${vehicle.image}', features: ${JSON.stringify(vehicle.features).replace(/"/g, '&quot;')}, available: ${vehicle.available}})">
+                            Book Now
+                        </button>
+                    ` : `
+                        <button class="btn-book" disabled>Unavailable</button>
+                        <button class="btn-add-to-cart" onclick="event.stopPropagation(); joinVehicleWaitingList('${vehicle.id}', '${vehicle.name}')">
+                            <i class="fas fa-clock"></i> Join Waitlist
+                        </button>
+                    `}
+                </div>
             </div>
         </div>
     `;
@@ -110,6 +121,14 @@ function showVehicleDetails(vehicle) {
                 <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid rgba(139, 92, 246, 0.2);">
                     <h3 style="margin-bottom: 1rem;">Booking Information</h3>
                     <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Rental Type</label>
+                        <select id="rentalType" class="form-input" style="width: 100%; padding: 0.75rem; background: var(--glass-bg); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; color: var(--text-primary); margin-bottom: 1rem;">
+                            <option value="one-time">One-Time Rental</option>
+                            <option value="weekly">Weekly Recurring (10% discount)</option>
+                            <option value="monthly">Monthly Recurring (10% discount)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
                         <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Pickup Date</label>
                         <input type="date" id="modalPickupDate" min="${today}" value="${today}" class="form-input" style="width: 100%; padding: 0.75rem; background: var(--glass-bg); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 8px; color: var(--text-primary);">
                     </div>
@@ -134,7 +153,7 @@ function showVehicleDetails(vehicle) {
                         </div>
                     </div>
                 </div>
-                <button class="btn-submit" onclick="bookVehicleFromModal('${vehicle.id}', '${vehicle.name}', ${vehicle.price})">
+                <button class="btn-submit" onclick="processBooking('${vehicle.id}', '${vehicle.name}', ${vehicle.price})">
                     <span>Confirm Booking</span>
                     <i class="fas fa-check"></i>
                 </button>
@@ -326,4 +345,93 @@ function initializeFilters() {
 window.addEventListener('DOMContentLoaded', () => {
     loadVehicles();
     initializeFilters();
+    initializeSmartBooking();
 });
+
+function initializeSmartBooking() {
+    const browseSection = document.getElementById('browse');
+    if (browseSection) {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.classList.contains('active')) {
+                    initializeCalendar();
+                }
+            });
+        });
+        
+        observer.observe(browseSection, { attributes: true, attributeFilter: ['class'] });
+    }
+}
+
+function initializeCalendar() {
+    const container = document.getElementById('calendarViewContainer');
+    if (!container || container.hasChildNodes()) return;
+    
+    const calendarView = new CalendarView('calendarViewContainer', {
+        onDateRangeSelected: (dateRange) => {
+            console.log('Date range selected:', dateRange);
+        }
+    });
+    
+    calendarView.loadAllVehiclesAvailability();
+}
+
+function addVehicleToCart(vehicle) {
+    const pickupDate = document.getElementById('pickupDate')?.value || new Date().toISOString().split('T')[0];
+    const returnDate = document.getElementById('returnDate')?.value || '';
+    const location = document.getElementById('filterLocation')?.value || 'downtown';
+    
+    if (!returnDate) {
+        showToast('Please select dates using the calendar first', 'warning');
+        return;
+    }
+    
+    if (typeof bookingCart !== 'undefined') {
+        const dates = { pickupDate, returnDate };
+        bookingCart.addItem(vehicle, dates, location);
+    }
+}
+
+function joinVehicleWaitingList(vehicleId, vehicleName) {
+    const pickupDate = document.getElementById('pickupDate')?.value || '';
+    const returnDate = document.getElementById('returnDate')?.value || '';
+    
+    if (!pickupDate || !returnDate) {
+        showToast('Please select dates first', 'warning');
+        return;
+    }
+    
+    if (typeof waitingList !== 'undefined') {
+        waitingList.joinWaitingList(vehicleId, vehicleName, pickupDate, returnDate);
+    }
+}
+
+function processBooking(vehicleId, vehicleName, price) {
+    const rentalType = document.getElementById('rentalType')?.value || 'one-time';
+    
+    if (rentalType === 'weekly' || rentalType === 'monthly') {
+        const pickupDate = document.getElementById('modalPickupDate').value;
+        const returnDate = document.getElementById('modalReturnDate').value;
+        const location = document.getElementById('modalLocation').value;
+        
+        if (typeof recurringRentals !== 'undefined') {
+            const frequency = rentalType;
+            const endDate = new Date(pickupDate);
+            endDate.setMonth(endDate.getMonth() + (frequency === 'weekly' ? 3 : 12)); // 3 months for weekly, 1 year for monthly
+            
+            recurringRentals.createRecurringRental(
+                vehicleId,
+                vehicleName,
+                price,
+                frequency,
+                pickupDate,
+                endDate.toISOString().split('T')[0],
+                location
+            ).then(() => {
+                closeVehicleModal();
+            });
+        }
+    } else {
+        bookVehicleFromModal(vehicleId, vehicleName, price);
+    }
+}
