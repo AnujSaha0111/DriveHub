@@ -322,16 +322,6 @@ Vehicle inventory management
 - **Modification history** tracking
 - **Conflict prevention** - validates against existing bookings
 
-## 🎨 Design Philosophy
-
-- **Premium Aesthetics**: Purple/violet gradient theme with cyan accents
-- **Glassmorphism**: Modern frosted glass effects throughout UI
-- **Smooth Animations**: Micro-interactions for enhanced UX
-- **Accessibility**: Clear information hierarchy and intuitive navigation
-- **Responsive Design**: Adapts seamlessly to different window sizes
-- **Professional Polish**: Enterprise-grade interface quality
-- **Toast Notifications**: Non-intrusive feedback system
-
 ## Security
 
 - Firebase Authentication for secure user management
@@ -371,19 +361,6 @@ The codebase follows a modular structure with clear separation of concerns:
 - Modular CSS files for each component
 - `smart-booking-styles.css`: Shared smart booking UI
 
-### Making Changes
-
-1. **Adding Features**: Create new .js and .css files, import in HTML
-2. **Styling Updates**: Edit relevant CSS files
-3. **Firebase Schema**: Update collections via Firebase console
-4. **Electron Config**: Modify `main.js` window settings
-
-### Code Standards
-- ES6+ JavaScript syntax
-- Async/await for Firebase operations
-- Modular component design
-- Inline comments for complex logic
-
 ## 🔍 Key Features Breakdown
 
 ### 1. Calendar System (`calendar-view.js`)
@@ -422,47 +399,6 @@ The codebase follows a modular structure with clear separation of concerns:
 - **Real-time monitoring** of booking dates
 - **Visual warnings** in dashboard
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Calendar not showing**
-- Check that calendar-view.css is loaded
-- Verify `calendarViewContainer` div exists in HTML
-- Check browser console for JavaScript errors
-
-**Cart not persisting**
-- localStorage might be disabled in browser
-- Check browser privacy settings
-- Clear cache and try again
-
-**Bookings not appearing**
-- Verify Firebase Firestore rules allow read/write
-- Check authentication state (must be logged in)
-- Inspect network tab for failed requests
-
-**Late fees not calculating**
-- Ensure booking has `returnDate` in past
-- Check `late-fees.js` is loaded
-- Verify `lateReturnWarnings` div exists
-
-**Recurring rentals not creating multiple bookings**
-- Check date range is valid (start < end)
-- Verify Firestore write permissions
-- Check browser console for batch write errors
-
-### Firebase Console Checks
-1. **Authentication**: Users > Check if user exists
-2. **Database**: Firestore > Verify collections exist
-3. **Rules**: Check read/write permissions
-4. **Usage**: Monitor quota limits
-
-### Browser Console
-- Open DevTools (F12)
-- Check Console tab for errors
-- Network tab shows Firebase requests
-- Application tab shows localStorage
-
 ## 🔐 Security
 
 - **Firebase Authentication** handles all user management
@@ -482,15 +418,6 @@ This is a complete, production-ready system. To extend:
 2. Create feature branch
 3. Add tests for new features
 4. Submit pull request
-
-## 📞 Support
-
-For issues or questions:
-- **Firebase Issues**: Check Firebase Console for authentication/database errors
-- **JavaScript Errors**: Review browser DevTools console
-- **Dependencies**: Run `npm install` to ensure all packages are installed
-- **Electron**: Check `main.js` logs for window configuration issues
-
 ---
 
 ## 🎉 Credits
@@ -498,6 +425,3 @@ For issues or questions:
 **DriveHub Rentals** - Your Journey, Our Wheels 🚗
 
 Built with ❤️ using Electron, Firebase, and modern web technologies.
-
-**Version**: 2.0 (Smart Booking System Integrated)  
-**Last Updated**: December 2025
